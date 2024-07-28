@@ -12,9 +12,29 @@ const InputForm = ({ onAddRecord, editRecord }) => {
     }
   }, [editRecord]);
 
+  const isValidDate = (dateString) => {
+    const date = new Date(dateString);
+    return date instanceof Date && !isNaN(date) && dateString === date.toISOString().split('T')[0];
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!date || !distance) return;
+
+    if (!date || !distance) {
+      alert('Пожалуйста, заполните оба поля.');
+      return;
+    }
+
+    if (!isValidDate(date)) {
+      alert('Пожалуйста, введите корректную дату.');
+      return;
+    }
+
+    if (isNaN(parseFloat(distance)) || parseFloat(distance) <= 0) {
+      alert('Пожалуйста, введите корректное значение для расстояния.');
+      return;
+    }
+
     onAddRecord(date, parseFloat(distance));
     setDate('');
     setDistance('');
@@ -23,8 +43,7 @@ const InputForm = ({ onAddRecord, editRecord }) => {
   return (
     <form onSubmit={handleSubmit} className="input-section">
       <input
-        type="text"
-        placeholder="дд.мм.гггг"
+        type="date"
         value={date}
         onChange={e => setDate(e.target.value)}
       />
